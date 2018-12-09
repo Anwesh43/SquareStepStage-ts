@@ -5,9 +5,9 @@ const h : number = window.innerHeight
 const scGap : number = 0.05
 const scDiv : number = 0.51
 const color : string = "#01579B"
-const sizeFactor : number = 2.3
+const sizeFactor : number = 3
 const strokeFactor : number = 90
-const lineSizeFactor : number = 0.6
+const lineSizeFactor : number = 0.5
 
 const divideScale : Function = (scale : number, i : number, n : number) : number =>Math.min(1/n, Math.max(0, scale - i/n)) * n
 const scaleFactor : Function = (scale : number) : number => Math.floor(scale / scDiv)
@@ -37,11 +37,13 @@ const drawSSLSNode : Function = (context : CanvasRenderingContext2D, i : number,
         const x = -size + size * Math.floor(j / 4) + offsetX
         const y =
         context.save()
-        context.translate(x, yGap * ((j % 4) + 1))
-        context.beginPath()
-        context.moveTo(0, 0)
-        context.lineTo(lineSize * sc, 0)
-        context.stroke()
+        context.translate(x, -size + yGap * ((j % 4) + 1))
+        if (sc > 0) {
+            context.beginPath()
+            context.moveTo(0, 0)
+            context.lineTo(lineSize * sc, 0)
+            context.stroke()
+        }
         context.restore()
     }
     context.restore()
@@ -50,7 +52,7 @@ const drawSSLSNode : Function = (context : CanvasRenderingContext2D, i : number,
 class SquareStackLineStepStage {
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D
-
+    renderer : Renderer = new Renderer()
     initCanvas() {
         this.canvas.width = w
         this.canvas.height = h
@@ -61,11 +63,14 @@ class SquareStackLineStepStage {
     render() {
         this.context.fillStyle = '#212121'
         this.context.fillRect(0, 0, w, h)
+        this.renderer.render(this.context)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
