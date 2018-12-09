@@ -183,3 +183,23 @@ class SquareStackLineStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+    ssls : SquareStackLineStep = new SquareStackLineStep()
+    animator : Animator = new Animator()
+    render(context : CanvasRenderingContext2D) {
+        this.ssls.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.ssls.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.ssls.update(() => {
+                    cb()
+                    this.animator.stop()
+                })
+            })
+        })
+    }
+}
